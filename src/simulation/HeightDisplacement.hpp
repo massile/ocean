@@ -10,6 +10,7 @@ namespace Ocean {
   Complex *spectrum0 = new Complex[RESOLUTION * RESOLUTION];
   Complex *spectrum = new Complex[RESOLUTION * RESOLUTION];
   float *heights = new float[RESOLUTION * RESOLUTION];
+  float *angularSpeeds = new float[RESOLUTION * RESOLUTION];
 
   float PhillipsSpectrumCoefs(const Vector2 &k) {
     float L = WIND_SPEED * WIND_SPEED / GRAVITY;
@@ -36,19 +37,23 @@ namespace Ocean {
 
         int index = i * RESOLUTION + j;
         spectrum0[index] = Complex(RandomGaussian() * p, RandomGaussian() * p);
+        angularSpeeds[index] = sqrt(GRAVITY * Length(k));
       }
   }
 
   void UpdateHeights(float t) {
-    for (int i = 0; i < RESOLUTION * RESOLUTION; i++)
-      spectrum[i] = spectrum0[i];
+    for (int i = 0; i < RESOLUTION * RESOLUTION; i++) {
+      float wt = angularSpeeds[i] * t;
+      Complex h = spectrum0[i];
+      spectrum[i] = h * ExpI(wt) + Conjugate(h) * ExpI(-wt);
+    }
 
     InverseFourierTransform2D(RESOLUTION, spectrum);
 
     for (int i = 0; i < RESOLUTION; i++)
       for (int j = 0; j < RESOLUTION; j++) {
         float sign = ((i + j) % 2) ? -1 : 1;
-        int index = i * RESOLUTION + j;  
+        int index = i * RESOLUTION + j;
         heights[index] = sign * spectrum[index].real;
       }
   }
