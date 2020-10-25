@@ -1,24 +1,13 @@
 #include <iostream>
 #include <sstream>
 #include "simulation/HeightDisplacement.hpp"
-#include "rendering/Image.hpp"
+#include "rendering/Render.hpp"
 
 int main() {
   using namespace Ocean;
-  Image image(RESOLUTION, RESOLUTION);
+  Image image(800, 600);
+  Draw(image);
 
-  GenerateSpectra();
-
-  for (int t = 0; t < 120; t++) {
-    UpdateHeights(t*0.04f);
-
-    for (int i = 0; i < RESOLUTION*RESOLUTION; i++) {
-      float grey = 0.05f * Ocean::heights[i] + 0.4f;
-      image.pixels[i] = Color(grey, grey, grey);
-    }
-
-    std::stringstream fileName;
-    fileName << "build/" << t << ".ppm";
-    image.Write(fileName.str().c_str());
-  }
+  image.Write("build/test.ppm");
+  system("ffmpeg -i build/test.ppm build/test.png");
 }
