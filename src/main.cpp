@@ -9,5 +9,5 @@ int main() {
   Draw(image);
 
   image.Write("build/test.ppm");
-  system("ffmpeg -i build/test.ppm build/test.png");
+  system("ffmpeg -y -i build/test.ppm build/test.png");
 }
