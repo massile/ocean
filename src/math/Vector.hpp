@@ -56,8 +56,8 @@ namespace Ocean {
     float y;
     float z;
 
-    Vector3() : x(0), y(0) {}
-    Vector3(float x) : x(x), y(x) {}
+    Vector3() : x(0), y(0), z(0) {}
+    Vector3(float x) : x(x), y(x), z(x) {}
     Vector3(float x, float y, float z) : x(x), y(y), z(z) {}
 
     inline Vector3 operator+(const Vector3 &v) const {
@@ -66,6 +66,10 @@ namespace Ocean {
 
     inline Vector3 operator-(const Vector3 &v) const {
       return Vector3(x - v.x, y - v.y, z - v.z);
+    }
+
+    inline Vector3 operator*(const Vector3 &v) const {
+      return Vector3(x * v.x, y * v.y, z * v.z);
     }
 
     inline Vector3 operator*(float a) const {
@@ -104,6 +108,10 @@ namespace Ocean {
     return Vector3(u.y * v.z - u.z * v.y,
                    u.z * v.x - u.x * v.z,
                    u.x * v.y - u.y * v.x);
+  }
+
+  inline Vector3 Reflect(const Vector3 &u, const Vector3 &axis) {
+    return u - 2 * Dot(u, axis) * axis;
   }
 
   using Point3 = Vector3;

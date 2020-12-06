@@ -18,4 +18,41 @@ namespace Ocean {
       a += Random();
     return a - 6.f;
   }
+
+  int Floor(float x) {
+    return x < 0 ? int(x) - 1 : int(x);
+  }
+
+  float Fract(float x) {
+    return x - Floor(x);
+  }
+
+  float Mod(float x, float y) {
+    return x - y * Floor(x / y);
+  }
+
+  template <typename T>
+  float Mix(T x, T y, float a) {
+    return (1.f - a) * x + a * y;
+  }
+
+  template <typename T>
+  T BilinearInterpolation(float x, float y, int width, int height, T *values) {
+    int xi1 = Mod(x, width);
+    int yi1 = Mod(y, height);
+    int xi2 = Mod(x + 1, width);
+    int yi2 = Mod(y + 1, height);
+
+    T topLeft = values[yi1 + xi1 * width];
+    T topRight = values[yi1 + xi2 * width];
+    T bottomLeft = values[yi2 + xi1 * width];
+    T bottomRight = values[yi2 + xi2 * width];
+
+    float xf = Fract(x);
+    T top = Mix(topLeft, topRight, xf);
+    T bottom = Mix(bottomLeft, bottomRight, xf);
+
+    return Mix(top, bottom, Fract(y));
+  }
+
 } // namespace Ocean

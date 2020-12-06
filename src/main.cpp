@@ -5,9 +5,17 @@
 
 int main() {
   using namespace Ocean;
-  Image image(800, 600);
-  Draw(image);
+  Image image(800, 800*9/16);
 
-  image.Write("build/test.ppm");
-  system("ffmpeg -y -i build/test.ppm build/test.png");
+  GenerateSpectra();
+  for (int i = 0; i < 1024; i++) {
+    UpdateHeights(i*0.016f);
+    Draw(image);
+
+    std::stringstream str;
+    str << "build/" << i << ".ppm";
+    image.Write(str.str().c_str());
+  }
+
+  system("ffmpeg -y -i build/%d.ppm build/test.mp4");
 }
