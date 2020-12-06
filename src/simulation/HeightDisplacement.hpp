@@ -9,11 +9,28 @@
 namespace Ocean {
   Complex *spectrum0 = new Complex[RESOLUTION * RESOLUTION];
   Complex *spectrum = new Complex[RESOLUTION * RESOLUTION];
+
+  Complex *choppinesses = new Complex[RESOLUTION * RESOLUTION];
+  Complex *choppinessDisplacements = new Complex[RESOLUTION * RESOLUTION];
+
   float *heights = new float[RESOLUTION * RESOLUTION];
   float *angularSpeeds = new float[RESOLUTION * RESOLUTION];
 
+  template <typename T>
+  T GetRemappedValues(float x, float y, T *values) {
+    return 0.000048F * BilinearInterpolation(100.f * x, 100.f * y, RESOLUTION, RESOLUTION, values);
+  }
+
+  Vector2 GetChoppinessDisplacement(float x, float y) {
+    Complex displacement = GetRemappedValues(x, y, choppinessDisplacements);
+    return CHOPPINESS * Vector2(displacement.real, displacement.imag);
+  }
+
   float GetHeight(float x, float y) {
-    return 0.000042F * BilinearInterpolation(80.f * x, 80.f * y, RESOLUTION, RESOLUTION, heights);
+    Vector2 horizontalDisplacement = GetChoppinessDisplacement(x, y);
+    x -= horizontalDisplacement.x;
+    y -= horizontalDisplacement.y;
+    return GetRemappedValues(x, y, heights);
   }
 
   float PhillipsSpectrumCoefs(const Vector2 &k) {
@@ -60,17 +77,23 @@ namespace Ocean {
           h1 = spectrum0[RESOLUTION - y + (RESOLUTION - x - 1) * RESOLUTION];
         else
           h1 = spectrum0[(RESOLUTION - y) + (RESOLUTION - x) * RESOLUTION];
-        spectrum[i] = h * ExpI(wt) + Conjugate(h1) * ExpI(-wt);
+
+        Vector2 k = Normalize(Vector2(RESOLUTION * .5f - x, RESOLUTION * .5f - y));
+        Complex spec = h * ExpI(wt) + Conjugate(h1) * ExpI(-wt);
+        spectrum[i] = spec;
+        choppinesses[i] = Complex(k.y, -k.x) * spec;
       }
     }
 
     InverseFourierTransform2D(RESOLUTION, spectrum);
+    InverseFourierTransform2D(RESOLUTION, choppinesses);
 
     for (int i = 0; i < RESOLUTION; i++)
       for (int j = 0; j < RESOLUTION; j++) {
         float sign = ((i + j) % 2) ? -1 : 1;
         int index = i * RESOLUTION + j;
         heights[index] = sign * spectrum[index].real;
+        choppinessDisplacements[index] = sign * choppinesses[index];
       }
   }
 

@@ -32,7 +32,7 @@ namespace Ocean {
   }
 
   template <typename T>
-  float Mix(T x, T y, float a) {
+  T Mix(T x, T y, float a) {
     return (1.f - a) * x + a * y;
   }
 

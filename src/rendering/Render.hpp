@@ -1,28 +1,23 @@
 #pragma once
 
-#include "Image.hpp"
+#include "Constants.hpp"
 #include "ImpactPoint.hpp"
 #include "../math/Ray.hpp"
 
 namespace Ocean {
-  Color horizonColor(1.71, 1.31, 0.83);
-  Color skyColor(0.4, 0.75, 1);
-  Color sunColor(1.5, 1, 0.6);
-  Direction3 sunDirection = Normalize(Vector3(-1.5, -1.2, 0.1));
-
   Color SkyColor(const Direction3 &dir) {
     float mixWeight = sqrt(fabs(dir.z));
-    Color sky = (1 - mixWeight) * horizonColor + mixWeight * skyColor;
-    Color sun = 4 * sunColor * pow(fmax(Dot(sunDirection, dir), 0), 1500);
+    Color sky = (1 - mixWeight) * HORIZON_COLOR + mixWeight * SKY_COLOR;
+    Color sun = 4 * SUN_COLOR * pow(fmax(Dot(SUN_DIRECTION, dir), 0), 1500);
     return sky + sun;
   }
 
   Color ComputeColor(const Ray &ray) {
     Intersection inter = FindIntersectionForRay(ray);
-    Color sky = ray.intensity * SkyColor(ray.direction);
+    Color skyColor = ray.intensity * SkyColor(ray.direction);
 
     if (inter.material == SKY) {
-      return sky;
+      return skyColor;
     }
 
     Point3 newOrigin = inter.impactPoint + 0.01f * inter.normal;
@@ -32,8 +27,8 @@ namespace Ocean {
     Color newIntensity = (1.f - 0.9f * frensel) * ray.intensity;
     Ray newRay(newOrigin, newDirection, newIntensity);
 
-    float fog = (1.0f - fmax(0.f, powf(1 - Length(ray.origin - inter.impactPoint) / 100.f, 1.2f)));
-    return fog * sky + ComputeColor(newRay);
+    float fog = (1.0f - fmax(0.f, powf(1 - Length(ray.origin - inter.impactPoint) / FOG_DISTANCE, FOG_INTENSITY)));
+    return fog * skyColor + ComputeColor(newRay);
   }
 
   Direction3 SetPointOfView(const Point3 &pixel, const Point3 &eye, const Point3 &target) {
@@ -43,12 +38,8 @@ namespace Ocean {
     return 0.3 * pixel.x * camX + 0.3 * pixel.y * camY + pixel.z * camZ;
   }
 
-  Color GenerateColor(float xPixel, float yPixel) {
-    float apertureSize = 0.15f;
-    Point3 eye = Point3(7.5, 7.5, 5.f) + apertureSize * Normalize(Vector3(
-                                                            Random(),
-                                                            Random(),
-                                                            Random()));
+  Color GeneratePixelColor(float xPixel, float yPixel) {
+    Point3 eye = EYE_POSITION + EYE_APERTURE_SIZE * Normalize(Vector3(Random(), Random(), Random()));
     Direction3 toPixel = SetPointOfView(Point3(xPixel, yPixel, 1), eye, Point3(0, 0, 0.2f));
     Ray ray(eye, toPixel);
     return ComputeColor(ray);
@@ -63,7 +54,7 @@ namespace Ocean {
 
         Color totalColor;
         for (int i = 0; i < 10; i++)
-          totalColor = totalColor + GenerateColor(xPixel, yPixel);
+          totalColor = totalColor + GeneratePixelColor(xPixel, yPixel);
         totalColor = totalColor / 10;
 
         Color color = (1.0f - 0.58f * (xPixel * xPixel + yPixel * yPixel)) * totalColor;
