@@ -8,7 +8,7 @@ An ocean simulator built from scratch.
 
 Link to the associated video, explaining how everything works (click on the image):
 
-[![](https://i9.ytimg.com/vi_webp/VxElz0u1rWE/hqdefault.webp?sqp=CLy9sv4F&rs=AOn4CLCY1LAltZ8LpthVlHIhSvx2cMeL0w)](https://www.youtube.com/watch?v=VxElz0u1rWE)
+[![](https://i9.ytimg.com/vi_webp/VxElz0u1rWE/hqdefault.webp?time=1607328300000&sqp=CKzEt_4F&rs=AOn4CLD5V9YMeYs60XWz2JzfQaqjMqF3QQ)](https://www.youtube.com/watch?v=VxElz0u1rWE)
 
 ## Dependencies
 
