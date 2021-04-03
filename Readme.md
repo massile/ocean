@@ -18,7 +18,7 @@ To use this simulator, you need to have [FFMPEG](https://www.ffmpeg.org) and the
 
 Make sure that FFMPEG is available on your path.
 
-## Build an run
+## Build and run
 
 Just run the following command
 
