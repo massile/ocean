@@ -9,7 +9,7 @@ int main() {
 
   GenerateSpectra();
   for (int i = 0; i < 1024; i++) {
-    printf("Saving frame %d...", i);
+    printf("Saving frame %d...\n", i);
     UpdateHeights(i*0.016f);
     Draw(image);
 
