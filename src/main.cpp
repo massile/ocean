@@ -5,10 +5,11 @@
 
 int main() {
   using namespace Ocean;
-  Image image(800, 800*9/16);
+  Image image(512, 512*9/16);
 
   GenerateSpectra();
   for (int i = 0; i < 1024; i++) {
+    printf("Saving frame %d...", i);
     UpdateHeights(i*0.016f);
     Draw(image);
 

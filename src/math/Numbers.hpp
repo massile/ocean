@@ -38,10 +38,10 @@ namespace Ocean {
 
   template <typename T>
   T BilinearInterpolation(float x, float y, int width, int height, T *values) {
-    int xi1 = Mod(x, width);
-    int yi1 = Mod(y, height);
-    int xi2 = Mod(x + 1, width);
-    int yi2 = Mod(y + 1, height);
+    int xi1 = Mod(x, width - 1);
+    int yi1 = Mod(y, height - 1);
+    int xi2 = Mod(x + 1, width - 1);
+    int yi2 = Mod(y + 1, height - 1);
 
     T topLeft = values[yi1 + xi1 * width];
     T topRight = values[yi1 + xi2 * width];
