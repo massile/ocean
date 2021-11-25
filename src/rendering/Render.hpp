@@ -53,9 +53,9 @@ namespace Ocean {
         float yPixel = float(y) / image.height - 0.5;
 
         Color totalColor;
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < NUM_SAMPLES; i++)
           totalColor = totalColor + GeneratePixelColor(xPixel, yPixel);
-        totalColor = totalColor / 10;
+        totalColor = totalColor / NUM_SAMPLES;
 
         Color color = (1.0f - 0.58f * (xPixel * xPixel + yPixel * yPixel)) * totalColor;
         image(x, y) = 1.25 * Color(pow(log(color.x + 1), 1.3),
